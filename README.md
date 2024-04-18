@@ -57,3 +57,20 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+## Database
+Download and install MongoDB from the following link
+https://www.mongodb.com/try/download/community
+
+Change the database default port settings in either one of two ways:
+ 1) In the database.module.ts file change the port number
+ 2) Change the MongoDb config in your file system:
+  - The MongoDB configuration file is usually named "mongod.conf"
+  - Depending on your operating system and how MongoDB was installed, the location of this file may vary. Common locations include /etc/mongod.conf for Linux systems and C:\Program Files\MongoDB\Server\<version>\bin\mongod.cfg for Windows systems.
+  - Open the mongod.conf file in a text editor
+  - Look for the net section in the configuration file. If it doesn't exist, you can add it at the end of the file.
+  - Within the net section, you'll find a line like port: 27017. This specifies the default MongoDB port.
+  - Change the port number. The default port number for this app is 12050
+  - Save the changes you made to the configuration file.
+  - After changing the port in the configuration file, you need to restart the MongoDB service for the changes to take effect.
+  - On Linux systems, you can typically restart MongoDB using a command like sudo systemctl restart mongod.
+  - On Windows systems, you can restart the MongoDB service through the Services panel. Press Win + R, then type services.msc, and look for the MongoDB service. Right-click on it and select "Restart."
