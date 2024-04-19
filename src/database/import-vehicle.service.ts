@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Vehicle } from '../model/vehicle/vehicle';
 import { VehicleHelperService } from '../model/vehicle/vehicle-helper.service';
+import { CacheService } from '../cache';
 
 /**
  * Service to import the csv vehicles file to mongodb
@@ -14,6 +15,7 @@ export class ImportVehiclesService implements OnModuleInit {
   constructor(
     private readonly vehicleHelperService: VehicleHelperService,
     @InjectModel(Vehicle.name) private readonly vehicleModel: Model<Vehicle>,
+    private readonly cacheService: CacheService,
   ) {}
 
   public async onModuleInit() {
@@ -21,8 +23,14 @@ export class ImportVehiclesService implements OnModuleInit {
     // This will prevent multiple adding to the database
     const count = await this.vehicleModel.countDocuments();
     if (count > 0) {
+      const vehicles = await this.vehicleModel.find();
+      // Add the data to the cache
+      this.cacheService.addAll(vehicles);
       return;
     }
+
+    const vehiclesToAdd: Vehicle[] = [];
+
     console.log(
       'The vehicle data is being added to the database. Please wait...',
     );
@@ -32,18 +40,16 @@ export class ImportVehiclesService implements OnModuleInit {
       .pipe(csvParser())
       .on('data', async (row) => {
         // Convert the row by cutting off the currecny at the end
-        const convertedRowData = this.vehicleHelperService.cutOffCurrencies(
+        const convertedVehicle = this.vehicleHelperService.cutOffCurrencies(
           row,
-          ['startPrice', 'pricePerKM'],
+          'startPrice',
+          'pricePerKM',
         );
-
-        // Set the converted data to the model
-        const newData = new this.vehicleModel(convertedRowData);
-
-        // Save the new data
-        await newData.save();
+        vehiclesToAdd.push(convertedVehicle);
       })
-      .on('end', () => {
+      .on('end', async () => {
+        await this.vehicleModel.insertMany(vehiclesToAdd);
+        this.cacheService.addAll(vehiclesToAdd);
         console.log(
           'CSV file successfully processed and data inserted into MongoDB.',
         );
