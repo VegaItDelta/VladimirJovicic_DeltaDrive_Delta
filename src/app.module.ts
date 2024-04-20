@@ -10,6 +10,7 @@ import { Connection } from 'mongoose';
 import { VehicleHelperService } from './model/vehicle/vehicle-helper.service';
 import { CacheModule } from './cache';
 import { SessionModule } from 'nestjs-session';
+import { GuidService } from './services';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SessionModule } from 'nestjs-session';
     VehicleHelperService,
     ImportVehiclesCommand,
     Connection,
+    GuidService
   ],
 })
 export class AppModule {}

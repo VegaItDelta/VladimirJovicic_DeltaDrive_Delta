@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { Vehicle } from '../model/vehicle/vehicle';
 import { VehicleHelperService } from '../model/vehicle/vehicle-helper.service';
 import { CacheService } from '../cache';
+import { GuidService } from '../services';
 
 /**
  * Service to import the csv vehicles file to mongodb
@@ -16,6 +17,7 @@ export class ImportVehiclesService implements OnModuleInit {
     private readonly vehicleHelperService: VehicleHelperService,
     @InjectModel(Vehicle.name) private readonly vehicleModel: Model<Vehicle>,
     private readonly cacheService: CacheService,
+    private readonly guidService: GuidService
   ) {}
 
   public async onModuleInit() {
@@ -45,6 +47,19 @@ export class ImportVehiclesService implements OnModuleInit {
           'startPrice',
           'pricePerKM',
         );
+
+        if (convertedVehicle.uuid  == null) {
+          convertedVehicle.uuid = this.guidService.generateGuid();
+        }
+
+        if (convertedVehicle.rating  == null) {
+          convertedVehicle.rating = 0.0;
+        }
+
+        if (convertedVehicle.booked  == null) {
+          // For mocking already booked vehicles, generate a 20% chance of being already booked
+          convertedVehicle.booked = Math.random() <= 0.2;
+        }
         vehiclesToAdd.push(convertedVehicle);
       })
       .on('end', async () => {
