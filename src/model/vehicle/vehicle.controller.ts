@@ -1,9 +1,10 @@
-import { Controller, Get, HttpStatus, Query, UseInterceptors, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Query, UseInterceptors, Res, Session, UnauthorizedException } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
 import { Vehicle } from './vehicle';
-import { CustomInterceptors } from '../../interceptor';
 import { Position, PositionService } from '../../services';
 import { VehicleOffer } from './vehicle-offer';
+import { HistoryService } from '../history/history.service';
+import { AuthentificationInterceptor } from '../../interceptor/authentification.interceptor';
 
 // Get the n closes vehicles
 const CLOSEST_VEHICLES_COUNT = 10;
@@ -22,12 +23,13 @@ const DECLINING_REASONS = [
   'I don\'t want to drive you',
   'Meh',
 ]
-@UseInterceptors(CustomInterceptors)
+@UseInterceptors(AuthentificationInterceptor)
 @Controller('vehicle')
 export class VehicleController {
   constructor(
     private readonly vehicleService: VehicleService,
-    private readonly positionService: PositionService
+    private readonly positionService: PositionService,
+    private readonly historyService: HistoryService
   ) {}
 
   @Get('/getAll')
@@ -58,18 +60,19 @@ export class VehicleController {
     try {
       // The currenct location of the passenger
       const passengerPosition: Position = {
-        latitude: passengerLatitude,
-        longitude: passengerLongitude
+        latitude: +passengerLatitude,
+        longitude: +passengerLongitude
       };
 
       // The currenct desitnation location
       const destinationPosition: Position = {
-        latitude: destinationLatitude,
-        longitude: destinationLongitude
+        latitude: +destinationLatitude,
+        longitude: +destinationLongitude
       };
 
       const vehicles = await this.vehicleService.getAllVehicles();
       const distanceToDestination = this.positionService.calculateDistance(passengerPosition, destinationPosition);
+
       const vehicleOffers: VehicleOffer[] = this.vehicleService.findClosestVehicles(passengerPosition, vehicles, CLOSEST_VEHICLES_COUNT, distanceToDestination);
       response.status(HttpStatus.OK).send({ message: `${vehicleOffers.length} offers found!`, vehicleDistances: vehicleOffers });
       return vehicleOffers;
@@ -82,7 +85,8 @@ export class VehicleController {
   public async bookVehicle(
     @Query('passenger-latitude') passengerLatitude: number, @Query('passenger-longitude') passengerLongitude: number,
     @Query('destination-latitude') destinationLatitude: number, @Query('destination-longitude') destinationLongitude: number,
-    @Query('uuid') uuid: string, 
+    @Query('uuid') uuid: string,
+    @Session() session: Record<string, any>,
     @Res() response): Promise<Vehicle | null> {
 
     if (
@@ -112,12 +116,10 @@ export class VehicleController {
         response.status(HttpStatus.OK).send({ message: `The driver have declined the ride. Reason: ${reason}` });
         return null;
       }
-
-      await this.vehicleService.book(vehicle);
-
+      
       const passengerPosition: Position = {
-        latitude: passengerLatitude,
-        longitude: passengerLongitude
+        latitude: +passengerLatitude,
+        longitude: +passengerLongitude
       };
 
       const destinationPosition: Position = {
@@ -129,7 +131,16 @@ export class VehicleController {
         latitude: vehicle.latitude,
         longitude: vehicle.longitude
       }
-      console.log('Vehicle is om the way. Please wait...')
+
+      // The time and date the start of the booking
+      const dateOfBooking = new Date();
+      // Calculate the total price
+      const distanceToDestination = this.positionService.calculateDistance(passengerPosition, destinationPosition);
+      const totalPrice = distanceToDestination * vehicle.pricePerKM + vehicle.startPrice;
+
+      await this.vehicleService.book(vehicle);
+
+      console.log('Vehicle is on the way. Please wait...')
 
       await this.vehicleService.drive({destinationPosition, passengerPosition, vehiclePosition})
       
@@ -138,6 +149,23 @@ export class VehicleController {
       response.status(HttpStatus.OK).send({ message: 'Vehicle reached the desination. Thank you for using Drive Delta!' });
 
       console.log('Ride finished!');
+
+      if (session.passenger == null) {
+        throw new UnauthorizedException('Undable to save data in histroy. No passenger in session found')
+      }
+
+      // Saving the ride to the history
+      await this.historyService.insert({
+        email: session.passenger.email,
+        vehicleId: vehicle.uuid,
+        startLatitude: passengerLatitude,
+        startLongitude: passengerLongitude,
+        destinationLatitude: destinationLatitude,
+        destinationLongitude: destinationLongitude,
+        totalPrice: totalPrice,
+        date: dateOfBooking
+      } as any);
+
       return vehicle;
     } catch (e) {
       console.error(e);

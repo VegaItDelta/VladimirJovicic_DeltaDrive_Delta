@@ -1,17 +1,17 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Observable, of } from 'rxjs';
-import { AuthentificationInterceptors } from './authentification.interceptor';
+import { AuthentificationInterceptor } from './authentification.interceptor';
 
 describe('AuthentificationInterceptors', () => {
-  let interceptor: AuthentificationInterceptors;
+  let interceptor: AuthentificationInterceptor;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthentificationInterceptors],
+      providers: [AuthentificationInterceptor],
     }).compile();
 
-    interceptor = module.get<AuthentificationInterceptors>(AuthentificationInterceptors);
+    interceptor = module.get<AuthentificationInterceptor>(AuthentificationInterceptor);
   });
 
   it('should be defined', () => {
