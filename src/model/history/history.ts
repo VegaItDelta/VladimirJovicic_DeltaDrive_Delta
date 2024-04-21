@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 @Schema()
 export class History extends Document {
     @Prop()
-    public passengerId: string;
+    public email: string;
 
     @Prop()
     public vehicleId: string;
