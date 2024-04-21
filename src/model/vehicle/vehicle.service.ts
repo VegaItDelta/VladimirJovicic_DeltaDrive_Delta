@@ -84,7 +84,7 @@ export class VehicleService {
         // The calculated distance between the vehicle and the passenger
         distanceToDriver: vehicleDistance.distance,
         // The price for the whole ride
-        price: distanceToDestination * vehicleDistance.vehicle.pricePerKM
+        price: distanceToDestination * vehicleDistance.vehicle.pricePerKM + vehicleDistance.vehicle.startPrice
       });    
       
       // If the array has the maximum length break to loop

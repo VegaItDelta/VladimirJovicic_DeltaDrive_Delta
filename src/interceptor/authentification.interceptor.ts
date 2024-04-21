@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 /**
  * Interceptor to guard requests for unauthorized access
  */
-export class AuthentificationInterceptors implements NestInterceptor {
+export class AuthentificationInterceptor implements NestInterceptor {
  public intercept(context: ExecutionContext, handler: CallHandler): Observable<any> {
 
   // Get the request

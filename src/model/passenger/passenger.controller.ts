@@ -56,9 +56,9 @@ export class PassengersController {
     session.destroy((err: any) => {
       if (err) {
         console.error('Error destroying session:', err);
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Failed to logout');
+        response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: 'Failed to logout' });
       } else {
-        response.status(HttpStatus.OK).send('Logged out successfully');
+        response.status(HttpStatus.OK).send({message: 'Logged out successfully'});
       }
     });
   }

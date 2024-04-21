@@ -1,1 +1,1 @@
-export { AuthentificationInterceptors as CustomInterceptors } from './authentification.interceptor';
+export { AuthentificationInterceptor } from './authentification.interceptor';
