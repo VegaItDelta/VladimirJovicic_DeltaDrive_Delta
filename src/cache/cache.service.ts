@@ -18,19 +18,18 @@ export class CacheService {
 
   /**
    * Sets an individual vehicle
-   * @param id The id of the vehicle
    * @param data The vehicle data to set
    */
-  public set(id: string, data: Vehicle): void {
-    this.cache.set(id, data);
+  public set(data: Vehicle): void {
+    this.cache.set(data.uuid, data);
   }
 
     /**
    * Gets an individual vehicle
-   * @param id The id of the vehicle
+   * @param uuid The uuid of the vehicle
    */
-    public get(id: string): Vehicle | null {
-      return this.cache.get(id) || null;
+    public get(uuid: string): Vehicle | null {
+      return this.cache.get(uuid) || null;
     }
 
   /**
@@ -46,6 +45,6 @@ export class CacheService {
    * @param vehicles The array to add
    */
   public addAll(vehicles: Vehicle[]): void {
-    vehicles.forEach(v => this.set(v.id, v));
+    vehicles.forEach(v => this.set(v));
   }
 }

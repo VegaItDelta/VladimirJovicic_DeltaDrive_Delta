@@ -4,25 +4,34 @@ import { Document } from 'mongoose';
 @Schema()
 export class Vehicle extends Document {
   @Prop()
-  private brand: string;
+  public uuid: string;
 
   @Prop()
-  private firstName: string;
+  public brand: string;
 
   @Prop()
-  private lastName: string;
+  public firstName: string;
 
   @Prop()
-  private latitude: number;
+  public lastName: string;
 
   @Prop()
-  private longitude: number;
+  public latitude: number;
 
   @Prop()
-  private startPrice: number;
+  public longitude: number;
 
   @Prop()
-  private pricePerKM: number;
+  public startPrice: number;
+
+  @Prop()
+  public pricePerKM: number;
+
+  @Prop()
+  public rating: number;
+
+  @Prop()
+  public booked: boolean;
 }
 
 export const VehicleSchema = SchemaFactory.createForClass(Vehicle);

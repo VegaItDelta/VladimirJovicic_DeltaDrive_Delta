@@ -9,6 +9,8 @@ import { ImportVehiclesCommand } from './database';
 import { Connection } from 'mongoose';
 import { VehicleHelperService } from './model/vehicle/vehicle-helper.service';
 import { CacheModule } from './cache';
+import { SessionModule } from 'nestjs-session';
+import { GuidService } from './services';
 
 @Module({
   imports: [
@@ -16,6 +18,9 @@ import { CacheModule } from './cache';
     VehicleModule,
     MongooseModule.forFeature([{ name: Vehicle.name, schema: VehicleSchema }]),
     CacheModule,
+    SessionModule.forRoot({
+      session: { secret: 'vladimir-super-secret-key' },
+    }),
   ],
   controllers: [AppController],
   providers: [
@@ -23,6 +28,7 @@ import { CacheModule } from './cache';
     VehicleHelperService,
     ImportVehiclesCommand,
     Connection,
+    GuidService
   ],
 })
 export class AppModule {}
