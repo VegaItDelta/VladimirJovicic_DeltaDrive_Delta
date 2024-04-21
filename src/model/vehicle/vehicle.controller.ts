@@ -1,10 +1,10 @@
 import { Controller, Get, HttpStatus, Query, UseInterceptors, Res, Session, UnauthorizedException } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
 import { Vehicle } from './vehicle';
-import { CustomInterceptors } from '../../interceptor';
 import { Position, PositionService } from '../../services';
 import { VehicleOffer } from './vehicle-offer';
 import { HistoryService } from '../history/history.service';
+import { AuthentificationInterceptor } from '../../interceptor/authentification.interceptor';
 
 // Get the n closes vehicles
 const CLOSEST_VEHICLES_COUNT = 10;
@@ -23,7 +23,7 @@ const DECLINING_REASONS = [
   'I don\'t want to drive you',
   'Meh',
 ]
-@UseInterceptors(CustomInterceptors)
+@UseInterceptors(AuthentificationInterceptor)
 @Controller('vehicle')
 export class VehicleController {
   constructor(
