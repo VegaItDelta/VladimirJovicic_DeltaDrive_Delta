@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Position } from './position';
 
+const VEHICLE_SPEED = 600; // km/h
+const UPDATE_POSITION_INTERVAL = 5000; // update the current position each n miliseconds
 @Injectable()
 export class PositionService {
      /**
@@ -38,4 +40,42 @@ export class PositionService {
   private toRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
   }
-}
+
+  /**
+   * Simulates moving from the start to end.
+   * The speed and update log interval are configurable with VEHICLE_SPEED and UPDATE_POSITION_INTERVAL
+   * @param start The start position
+   * @param end The destination position 
+   */
+  public async move(start: Position, end: Position): Promise<void> {
+    const currentPosition = start;
+    const distance = this.calculateDistance(start, end);
+
+    const timeToReachTarget = (distance / VEHICLE_SPEED) * 3600 * 1000; 
+    let steps = Math.ceil(timeToReachTarget / UPDATE_POSITION_INTERVAL);
+
+    const stepLat = (end.latitude - currentPosition.latitude) / steps;
+    const stepLng = (end.longitude - currentPosition.longitude) / steps;
+
+    return new Promise<void>((resolve) => {
+      const intervalId = setInterval(() => {
+        const distanceLeft = this.calculateDistance(currentPosition, end);
+        console.log('Current position of the vehicle = ', currentPosition);
+        console.log('Distance left = ', distanceLeft);
+        if (steps <= 0) {
+          end.latitude = +end.latitude;
+          end.longitude = +end.longitude;
+          currentPosition.latitude = +end.latitude;
+          currentPosition.longitude = +end.longitude;
+          clearInterval(intervalId);
+          resolve();
+        }
+        currentPosition.latitude += stepLat;
+        currentPosition.longitude += stepLng;
+        steps--;
+  
+        }, UPDATE_POSITION_INTERVAL);
+    });
+ }
+
+} 

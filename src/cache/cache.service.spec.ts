@@ -8,25 +8,25 @@ describe('CacheService', () => {
   });
 
   it('should set and get individual vehicle correctly', () => {
-    const vehicle = { id: '1', name: 'Car', type: 'sedan' };
-    cacheService.set(vehicle.id, vehicle as any);
-    const retrievedVehicle = cacheService.get(vehicle.id);
+    const vehicle = { uuid: 'uuid1', id: '1', name: 'Car', type: 'sedan' };
+    cacheService.set(vehicle as any);
+    const retrievedVehicle = cacheService.get(vehicle.uuid);
     expect(retrievedVehicle).toEqual(vehicle);
   });
 
   it('should check if cache is empty correctly', () => {
     expect(cacheService.isEmpty()).toBe(true);
 
-    const vehicle = { id: '1', name: 'Car', type: 'sedan' };
-    cacheService.set(vehicle.id, vehicle as any);
+    const vehicle = { uuid: 'uuid1', id: '1', name: 'Car', type: 'sedan' };
+    cacheService.set(vehicle as any);
 
     expect(cacheService.isEmpty()).toBe(false);
   });
 
   it('should add all vehicles correctly', () => {
     const vehicles = [
-      { id: '1', name: 'Car', type: 'sedan' },
-      { id: '2', name: 'Truck', type: 'pickup' },
+      { uuid: 'uuid1', id: '1', name: 'Car', type: 'sedan' },
+      { uuid: 'uuid2', id: '2', name: 'Truck', type: 'pickup' },
     ];
 
     cacheService.addAll(vehicles as any);
