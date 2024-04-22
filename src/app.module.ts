@@ -8,6 +8,7 @@ import { Connection } from 'mongoose';
 import { CacheModule } from './cache';
 import { SessionModule } from 'nestjs-session';
 import { GuidService } from './services';
+import { ReviewModule } from './model/review';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { GuidService } from './services';
     SessionModule.forRoot({
       session: { secret: 'vladimir-super-secret-key' },
     }),
-    HistoryModule
+    HistoryModule,
+    ReviewModule
   ],
   controllers: [AppController],
   providers: [
