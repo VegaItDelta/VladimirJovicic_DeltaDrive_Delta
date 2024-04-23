@@ -4,13 +4,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { GuidService } from '../../services';
 import { ReviewDto } from './dto';
-import { Vehicle, VehicleReviewDto } from '../vehicle';
+import { VehicleReviewDto } from '../vehicle';
+import { CacheService } from '../../cache';
 
 @Injectable()
 export class ReviewService {
     public constructor(
         @InjectModel(Review.name) private reviewModel: Model<Review>,
-        private readonly guidService: GuidService
+        private readonly guidService: GuidService,
+        private readonly cacheService: CacheService
     ) { }
 
     /**
@@ -19,7 +21,11 @@ export class ReviewService {
      * @returns The review
      */
     public async get(uuid: string): Promise<Review> {
-        return await this.reviewModel.findOne({ uuid });
+        try {
+            return await this.reviewModel.findOne({ uuid });
+        } catch (e) {
+            throw new Error(e);
+        }
     }
 
 
@@ -48,25 +54,14 @@ export class ReviewService {
      */
     public async getAllReviews(email: string): Promise<{ completed: ReviewDto[]; pending: ReviewDto[]; }> {
         // Fetch the reviews by joining with the vehicle by the id
-        const query = { email };
-        const reviews = await this.fetchReviews(query);
+        const reviewsFromDb: Review[] = await this.reviewModel.find({email});
 
         const pending: ReviewDto[] = [];
         const completed: ReviewDto[] = [];
-        for (let review of reviews) {
-            // The vehicle was queried by uuid so it should be only 1 vehicle returned
-            const vehicleData: Vehicle = review.vehicle[0];
-            const reviewDto: ReviewDto = {
-                dateOfRide: review.dateOfRide,
-                uuid: review.uuid,
-                price: review.price,
-                vehicle: {
-                    vehicleId: vehicleData?.uuid || 'Id not found',
-                    brand: vehicleData?.brand || 'Brand not found',
-                    firstName: vehicleData?.firstName || 'First name not found',
-                    lastName: vehicleData?.lastName || 'Last name not found'
-                }
-            }
+        for (let review of reviewsFromDb) {
+            const vehicle = this.cacheService.get(review.vehicleId);
+            review.vehicle = vehicle;
+            const reviewDto: ReviewDto = new ReviewDto(review);
 
             // Add the rate if it is present
             if (review.rate != null) {
@@ -109,10 +104,7 @@ export class ReviewService {
         const vehicleReviews: VehicleReviewDto[] = []
 
         // Get the review by the vehicleId and the completed ones
-        const query = { vehicleId, completed: true };
-
-        // Fetch the reviews
-        const reviews = await this.fetchReviews(query);
+        const reviews: Review[] = await this.reviewModel.find({ vehicleId, completed: true });
 
         for (let review of reviews) {
             // Assign the rate
@@ -131,24 +123,4 @@ export class ReviewService {
 
         return vehicleReviews;
     }
-
-    /**
-     * Fetch the reviews by joining it with the vehicle
-     * @param query The query to match
-     * @returns Reviews joined by the vehicle table
-     */
-    private async fetchReviews(query: any): Promise<Review[]> {
-        return await this.reviewModel.aggregate([
-            { $match: query }, // Get the review by query
-            {
-                $lookup: {
-                    from: 'vehicles', // Name of the vehicles collection
-                    localField: 'vehicleId', // Field in the review model
-                    foreignField: 'uuid', // Field in the vehicles collection
-                    as: 'vehicle' // Name of the field to store the matched vehicles
-                }
-            }
-        ]);
-    }
-
 }

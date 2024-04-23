@@ -46,7 +46,7 @@ describe('PassengerService', () => {
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
       mockPassengerModel.create.mockResolvedValueOnce(passengerData);
 
-      await passengerService.regiester(passengerData as any);
+      await passengerService.register(passengerData as any);
 
       expect(validator.isEmail).toHaveBeenCalledWith('test@example.com');
       expect(mockPassengerModel.findOne).toHaveBeenCalledWith({ email: 'test@example.com' });
@@ -66,7 +66,7 @@ describe('PassengerService', () => {
 
       (validator.isEmail as jest.Mock).mockReturnValue(false);
 
-      await expect(passengerService.regiester(passengerData as any)).rejects.toThrow(BadRequestException);
+      await expect(passengerService.register(passengerData as any)).rejects.toThrow(BadRequestException);
     });
   });
 

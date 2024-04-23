@@ -15,7 +15,7 @@ export class PassengerService {
    * Registers a new passenger where the email must me unique
    * @param passengerData The registration data for the passenger
    */
-  public async regiester(passengerData: Passenger): Promise<void> {
+  public async register(passengerData: Passenger): Promise<void> {
     const email = passengerData.email.trim().toLowerCase();
     if (!validator.isEmail(email)) {
       throw new BadRequestException('Invalid email address');

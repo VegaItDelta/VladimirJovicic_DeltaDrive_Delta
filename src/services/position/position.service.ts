@@ -60,8 +60,11 @@ export class PositionService {
     return new Promise<void>((resolve) => {
       const intervalId = setInterval(() => {
         const distanceLeft = this.calculateDistance(currentPosition, end);
-        console.log('Current position of the vehicle = ', currentPosition);
-        console.log('Distance left = ', distanceLeft);
+        console.table({
+          'Current latitude': currentPosition.latitude,
+          'Current longitude': currentPosition.longitude,
+          'Distance left': distanceLeft,
+        });
         if (steps <= 0) {
           end.latitude = +end.latitude;
           end.longitude = +end.longitude;

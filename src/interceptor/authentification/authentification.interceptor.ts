@@ -13,7 +13,7 @@ export class AuthentificationInterceptor implements NestInterceptor {
   // Check if a passenger is present in the session
   if (request?.session?.passenger == null) {
     // If a passenger is not present then throw exception
-    throw new UnauthorizedException();
+    throw new UnauthorizedException('You are logged out');
   }
 
   // If a request is preent proceed with the request

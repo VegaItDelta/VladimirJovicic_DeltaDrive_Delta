@@ -17,7 +17,6 @@ export class ReviewController {
       ): Promise<void> {
         try {
           const reviews = await this.reviewService.getAllReviews(session.passenger.email);
-  
           response.status(HttpStatus.OK).send({
               message: 'Reviews',
               data: { completed: reviews.completed, pending: reviews.pending }

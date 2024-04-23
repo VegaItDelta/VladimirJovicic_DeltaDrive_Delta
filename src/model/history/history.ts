@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Vehicle } from '../vehicle';
 
 @Schema()
 export class History extends Document {
@@ -26,6 +27,8 @@ export class History extends Document {
 
     @Prop()
     public date: Date;
+
+    public vehicle?: Vehicle;
 }
 
 export const HistorySchema = SchemaFactory.createForClass(History);

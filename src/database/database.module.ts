@@ -5,7 +5,7 @@ import { CacheModule } from '../cache';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb://localhost:12050/VladimirJovicic_DeltaDruve_Delta',
+      'mongodb://localhost:12050/VladimirJovicic_DeltaDrive_Delta',
     ),
     CacheModule,
   ],

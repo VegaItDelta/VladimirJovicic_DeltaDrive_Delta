@@ -38,7 +38,7 @@ describe('HistoryService', () => {
       const mockHistoryData = [];
       (historyModel.find as any).mockResolvedValue(mockHistoryData);
 
-      const result = await service.viewUserHistory(mockEmail);
+      const result = await service.getUserHistory(mockEmail);
 
       expect(result).toEqual(mockHistoryData);
       expect(historyModel.find).toHaveBeenCalledWith({ email: mockEmail });

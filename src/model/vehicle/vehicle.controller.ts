@@ -3,7 +3,7 @@ import { VehicleService } from './vehicle.service';
 import { Position, PositionService } from '../../services';
 import { VehicleOffer } from './dto/vehicle-offer';
 import { HistoryService } from '../history/history.service';
-import { AuthentificationInterceptor } from '../../interceptor/authentification.interceptor';
+import { AuthentificationInterceptor } from '../../interceptor/authentification/authentification.interceptor';
 import { ReviewService } from '../review';
 
 // Get the n closes vehicles
@@ -163,6 +163,7 @@ export class VehicleController {
       response.status(HttpStatus.OK).send({ message: 'Vehicle reached the desination. Thank you for using Drive Delta!' });
 
     } catch (e) {
+      console.error(e);
       response.status(e.getStatus()).send({ message: e.message });
     }
 

@@ -1,6 +1,6 @@
 export class VehicleDto {
 
-  public vehicleId: string;
+  public vehicleId?: string;
 
   public brand: string;
 
