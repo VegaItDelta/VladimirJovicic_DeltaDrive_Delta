@@ -1,10 +1,9 @@
 import { Controller, Get, HttpStatus, Query, UseInterceptors, Res, Session, HttpException } from '@nestjs/common';
-import { VehicleService } from './vehicle.service';
+import { DrivingPositionData, VehicleService } from './vehicle.service';
 import { Position, PositionService } from '../../services';
 import { VehicleOffer } from './dto/vehicle-offer';
-import { HistoryService } from '../history/history.service';
 import { AuthentificationInterceptor } from '../../interceptor/authentification/authentification.interceptor';
-import { ReviewService } from '../review';
+import { WorkerService } from '../../queue';
 
 // Get the n closes vehicles
 const CLOSEST_VEHICLES_COUNT = 10;
@@ -29,8 +28,7 @@ export class VehicleController {
   constructor(
     private readonly vehicleService: VehicleService,
     private readonly positionService: PositionService,
-    private readonly historyService: HistoryService,
-    private readonly reviewService: ReviewService,
+    private readonly workerService: WorkerService,
   ) {}
 
   @Get('/getAll')
@@ -105,6 +103,10 @@ export class VehicleController {
         throw new HttpException('Vehicle not found.', HttpStatus.NOT_FOUND);
       }
 
+      if (vehicle.booked) {
+        throw new HttpException('Vehicle already bookend.', HttpStatus.BAD_REQUEST);
+      }
+
       // There is a chance of declining the ride
       if (Math.random() * 100 <= DECLINING_CHANCE) {
         // Generate a random reason for declining the ride
@@ -130,37 +132,25 @@ export class VehicleController {
         longitude: vehicle.longitude
       }
 
-      // The time and date the start of the booking
-      const dateOfBooking = new Date();
       // Calculate the total price
       const distanceToDestination = this.positionService.calculateDistance(passengerPosition, destinationPosition);
       const totalPrice = distanceToDestination * vehicle.pricePerKM + vehicle.startPrice;
 
       await this.vehicleService.book(vehicle);
 
-      console.log('Vehicle is on the way. Please wait...')
-
-      await this.vehicleService.drive({destinationPosition, passengerPosition, vehiclePosition})
-      
-      await this.vehicleService.finishRide(vehicle, destinationPosition);
-  
-      console.log('Ride finished!');
-
-      // Saving the ride to the history
-      await this.historyService.insert({
+      const drivingPositionData: DrivingPositionData = {
+        destinationPosition,
+        passengerPosition,
+        vehiclePosition,
         email: session.passenger.email,
-        vehicleId: vehicle.uuid,
-        startLatitude: passengerLatitude,
-        startLongitude: passengerLongitude,
-        destinationLatitude: destinationLatitude,
-        destinationLongitude: destinationLongitude,
-        totalPrice: totalPrice,
-        date: dateOfBooking
-      } as any);
+        totalPrice,
+        vehicle
+      }
 
-      await this.reviewService.insertReviewRequest(session.passenger.email, vehicle.uuid, totalPrice);
+      this.workerService.addToQueue(drivingPositionData);
+      this.workerService.processQueue();
 
-      response.status(HttpStatus.OK).send({ message: 'Vehicle reached the desination. Thank you for using Drive Delta!' });
+      response.status(HttpStatus.OK).send({ message: 'Thank you for choosing Delta Drive. The vehicle will arrive soon.' });
 
     } catch (e) {
       console.error(e);

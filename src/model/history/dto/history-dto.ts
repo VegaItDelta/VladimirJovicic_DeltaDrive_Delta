@@ -12,9 +12,9 @@ export class HistoryDto {
 
         const vehicle = history.vehicle;
         this.vehicle = {
-            brand: vehicle.brand,
-            firstName: vehicle.firstName,
-            lastName: vehicle.lastName,
+            brand: vehicle?.brand,
+            firstName: vehicle?.firstName,
+            lastName: vehicle?.lastName,
         }
     }
     public startLatitude: number;

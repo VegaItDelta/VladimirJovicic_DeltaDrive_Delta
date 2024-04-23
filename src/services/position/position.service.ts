@@ -1,7 +1,8 @@
+import { Vehicle } from './../../model/vehicle/vehicle';
 import { Injectable } from '@nestjs/common';
 import { Position } from './position';
 
-const VEHICLE_SPEED = 600; // km/h
+const VEHICLE_SPEED = 20000; // km/h
 const UPDATE_POSITION_INTERVAL = 5000; // update the current position each n miliseconds
 @Injectable()
 export class PositionService {
@@ -47,7 +48,7 @@ export class PositionService {
    * @param start The start position
    * @param end The destination position 
    */
-  public async move(start: Position, end: Position): Promise<void> {
+  public async move(vehicle: Vehicle, start: Position, end: Position): Promise<void> {
     const currentPosition = start;
     const distance = this.calculateDistance(start, end);
 
@@ -61,6 +62,8 @@ export class PositionService {
       const intervalId = setInterval(() => {
         const distanceLeft = this.calculateDistance(currentPosition, end);
         console.table({
+          'Driver': `${vehicle.firstName} ${vehicle.lastName}`,
+          'Brand': vehicle.brand,
           'Current latitude': currentPosition.latitude,
           'Current longitude': currentPosition.longitude,
           'Distance left': distanceLeft,

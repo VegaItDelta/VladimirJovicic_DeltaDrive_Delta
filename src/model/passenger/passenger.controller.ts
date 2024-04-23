@@ -34,7 +34,7 @@ export class PassengersController {
       session.passenger = {
         email: passenger.email
       };
-      response.status(HttpStatus.OK).send({ message: 'Login successful', passenger });
+      response.status(HttpStatus.OK).send({ message: `Login successful ${passenger.email}` });
     } catch(e) {
       response.status(e.status).send({ message: e.message });
     }

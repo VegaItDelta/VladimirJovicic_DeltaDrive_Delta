@@ -15,6 +15,12 @@ export interface DrivingPositionData {
   destinationPosition: Position;
   // The vehicle current position
   vehiclePosition: Position;
+  // The user who ordered the ride
+  email: string;
+  // The vehicle that has been booked
+  vehicle: Vehicle;
+  // The total price of the whole ride
+  totalPrice: number;
 }
 @Injectable()
 export class VehicleService {
@@ -124,20 +130,6 @@ export class VehicleService {
     await this.vehicleModel.updateOne({uuid: vehicle.uuid}, vehicle).exec();
   }
 
-  /**
-   * Drives a vehicle from it's starting point to the passenger and then from the passenger to the destination
-   * @param data The start, end and driver location needed for the ride {@link DrivingPositionData}
-   */
-  public async drive(data: DrivingPositionData): Promise<void>{
-    const { destinationPosition, passengerPosition, vehiclePosition } = data;
-
-    // Comming to pick up the passnger
-    await this.positionService.move(vehiclePosition, passengerPosition);
-
-    console.log('Taking you to your destination...');
-    // Bringing the passenger to the destination
-    await this.positionService.move(passengerPosition, destinationPosition);
-  }
 
   /**
    * Updates the vehicle location and booked status, saves the data in the cache and updates the record in the db
