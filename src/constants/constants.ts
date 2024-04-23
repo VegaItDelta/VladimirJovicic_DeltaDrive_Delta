@@ -1,0 +1,1 @@
+export const CONSTRUCTOR_PREFIX = 'delta-drive';

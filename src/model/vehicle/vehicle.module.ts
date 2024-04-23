@@ -9,11 +9,14 @@ import { GuidService, PositionService } from '../../services';
 import { Review, ReviewSchema, ReviewService } from '../review';
 import { QueueService, WorkerService } from '../../queue';
 import { HistoryService, History, HistorySchema } from '../history';
+import { RouterModule } from '@nestjs/core';
+import { CONSTRUCTOR_PREFIX } from '../../constants';
 
 @Module({
   controllers: [VehicleController],
   providers: [VehicleService, PositionService, GuidService, ReviewService, WorkerService, QueueService, HistoryService],
   imports: [
+    RouterModule.register([ { path: CONSTRUCTOR_PREFIX, module: VehicleModule } ]),
     DatabaseModule,
     MongooseModule.forFeature([{ name: Vehicle.name, schema: VehicleSchema }]),
     CacheModule,

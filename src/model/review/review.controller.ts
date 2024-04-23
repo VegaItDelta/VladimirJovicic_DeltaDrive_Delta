@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Put, Res, Session, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Put, Res, Session, UseInterceptors } from '@nestjs/common';
 import { AuthentificationInterceptor } from '../../interceptor';
 import { ReviewService } from './review.service';
 import { ReviewDto } from './dto';
@@ -28,24 +28,14 @@ export class ReviewController {
 
       @Put('/:id')
       public async leaveReview(
+        @Param('id') id: string,
         @Body('review') reviewDto: ReviewDto,
-        @Res() response,
-        @Session() session: Record<string, any>
+        @Res() response
       ): Promise<void> {
 
         try {
-          // If the rate is not provided return a bad request
-          if (reviewDto.rate == null) {
-            throw new HttpException('Rate is missing!', HttpStatus.BAD_REQUEST);
-          }
-  
-          // If the rate is not in the range return a bad request
-          if (reviewDto.rate < 1 || reviewDto.rate > 5) {
-            throw new HttpException('The rate must be between 1 and 5', HttpStatus.BAD_REQUEST);
-          }
-  
           // Get the review
-          const review = await this.reviewService.get(reviewDto.uuid);
+          const review = await this.reviewService.get(id);
   
           // Check if the review is found
           if (review == null) {
@@ -55,6 +45,15 @@ export class ReviewController {
           // Make sure that the user does not do a review multiple times
           if (review.completed) {
             throw new HttpException('You have already completed this review!', HttpStatus.BAD_REQUEST);
+          }
+          // If the rate is not provided return a bad request
+          if (reviewDto.rate == null) {
+            throw new HttpException('Rate is missing!', HttpStatus.BAD_REQUEST);
+          }
+  
+          // If the rate is not in the range return a bad request
+          if (reviewDto.rate < 1 || reviewDto.rate > 5) {
+            throw new HttpException('The rate must be between 1 and 5', HttpStatus.BAD_REQUEST);
           }
   
           // Assigne the rate

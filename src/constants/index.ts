@@ -1,0 +1,1 @@
+export { CONSTRUCTOR_PREFIX } from './constants';
