@@ -1,4 +1,4 @@
-import { Controller, Get, HttpStatus, Res, Session, UnauthorizedException, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Res, Session, UseInterceptors } from '@nestjs/common';
 import { AuthentificationInterceptor } from '../../interceptor';
 import { HistoryService } from './history.service';
 import { History } from './history';

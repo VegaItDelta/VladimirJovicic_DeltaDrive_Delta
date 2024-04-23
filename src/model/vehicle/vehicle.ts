@@ -28,9 +28,6 @@ export class Vehicle extends Document {
   public pricePerKM: number;
 
   @Prop()
-  public rating: number;
-
-  @Prop()
   public booked: boolean;
 }
 

@@ -1,10 +1,10 @@
-import { Controller, Get, HttpStatus, Query, UseInterceptors, Res, Session, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Query, UseInterceptors, Res, Session, HttpException } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
-import { Vehicle } from './vehicle';
 import { Position, PositionService } from '../../services';
-import { VehicleOffer } from './vehicle-offer';
+import { VehicleOffer } from './dto/vehicle-offer';
 import { HistoryService } from '../history/history.service';
 import { AuthentificationInterceptor } from '../../interceptor/authentification.interceptor';
+import { ReviewService } from '../review';
 
 // Get the n closes vehicles
 const CLOSEST_VEHICLES_COUNT = 10;
@@ -29,16 +29,17 @@ export class VehicleController {
   constructor(
     private readonly vehicleService: VehicleService,
     private readonly positionService: PositionService,
-    private readonly historyService: HistoryService
+    private readonly historyService: HistoryService,
+    private readonly reviewService: ReviewService,
   ) {}
 
   @Get('/getAll')
-  public async getAllVehicles(): Promise<Vehicle[]> {
+  public async getAllVehicles(@Res() response): Promise<void> {
     try {
       const vehicles = await this.vehicleService.getAllVehicles();
-      return vehicles;
+      response.status(HttpStatus.OK).send({ message: `${vehicles.length} vehciles found!`, data: vehicles });
     } catch (e) {
-      console.error('getAllVehicles error', e);
+      response.status(e.getStatus()).send({ message: e.message });
     }
   }
 
@@ -47,17 +48,17 @@ export class VehicleController {
     @Query('passenger-latitude') passengerLatitude: number, @Query('passenger-longitude') passengerLongitude: number,
     @Query('destination-latitude') destinationLatitude: number, @Query('destination-longitude') destinationLongitude: number,
     @Res() response
-  ): Promise<VehicleOffer[]> {
-    if (
-      passengerLatitude == null ||
-      passengerLongitude == null ||
-      destinationLatitude == null ||
-      destinationLongitude == null
-    ) {
-      response.status(HttpStatus.BAD_REQUEST).send({ message: 'Wrong location data' });
-      return [];
-    }
+  ): Promise<void> {
     try {
+      if (
+        passengerLatitude == null ||
+        passengerLongitude == null ||
+        destinationLatitude == null ||
+        destinationLongitude == null
+      ) {
+          throw new HttpException('Wrong location data', HttpStatus.BAD_REQUEST);
+      }
+   
       // The currenct location of the passenger
       const passengerPosition: Position = {
         latitude: +passengerLatitude,
@@ -73,11 +74,10 @@ export class VehicleController {
       const vehicles = await this.vehicleService.getAllVehicles();
       const distanceToDestination = this.positionService.calculateDistance(passengerPosition, destinationPosition);
 
-      const vehicleOffers: VehicleOffer[] = this.vehicleService.findClosestVehicles(passengerPosition, vehicles, CLOSEST_VEHICLES_COUNT, distanceToDestination);
+      const vehicleOffers: VehicleOffer[] = await this.vehicleService.findClosestVehicles(passengerPosition, vehicles, CLOSEST_VEHICLES_COUNT, distanceToDestination);
       response.status(HttpStatus.OK).send({ message: `${vehicleOffers.length} offers found!`, vehicleDistances: vehicleOffers });
-      return vehicleOffers;
     } catch(e) {
-      console.error('bookVehicles error', e);
+      response.status(e.getStatus()).send({ message: e.message });
     }
   }
 
@@ -87,24 +87,22 @@ export class VehicleController {
     @Query('destination-latitude') destinationLatitude: number, @Query('destination-longitude') destinationLongitude: number,
     @Query('uuid') uuid: string,
     @Session() session: Record<string, any>,
-    @Res() response): Promise<Vehicle | null> {
+    @Res() response): Promise<void> {
 
-    if (
+    try {
+      if (
       passengerLatitude == null ||
       passengerLongitude == null ||
       destinationLatitude == null ||
       destinationLongitude == null
-    ) {
-      response.status(HttpStatus.BAD_REQUEST).send({ message: 'Wrong location data' });
-      return null;
-    }
-  
-    try {
+      ) {
+        throw new HttpException('Wrong location data', HttpStatus.BAD_REQUEST);
+      } 
+    
       const vehicle = await this.vehicleService.getVehicle(uuid);
 
       if (vehicle == null) {
-        response.status(HttpStatus.NOT_FOUND).send({ message: 'ERROR: The vehicle can not be found!' });
-        return null;
+        throw new HttpException('Vehicle not found.', HttpStatus.NOT_FOUND);
       }
 
       // There is a chance of declining the ride
@@ -114,7 +112,7 @@ export class VehicleController {
         const reason = DECLINING_REASONS[randomIndex];
 
         response.status(HttpStatus.OK).send({ message: `The driver have declined the ride. Reason: ${reason}` });
-        return null;
+        return;
       }
       
       const passengerPosition: Position = {
@@ -146,13 +144,7 @@ export class VehicleController {
       
       await this.vehicleService.finishRide(vehicle, destinationPosition);
   
-      response.status(HttpStatus.OK).send({ message: 'Vehicle reached the desination. Thank you for using Drive Delta!' });
-
       console.log('Ride finished!');
-
-      if (session.passenger == null) {
-        throw new UnauthorizedException('Undable to save data in histroy. No passenger in session found')
-      }
 
       // Saving the ride to the history
       await this.historyService.insert({
@@ -166,12 +158,13 @@ export class VehicleController {
         date: dateOfBooking
       } as any);
 
-      return vehicle;
+      await this.reviewService.insertReviewRequest(session.passenger.email, vehicle.uuid, totalPrice);
+
+      response.status(HttpStatus.OK).send({ message: 'Vehicle reached the desination. Thank you for using Drive Delta!' });
+
     } catch (e) {
-      console.error(e);
+      response.status(e.getStatus()).send({ message: e.message });
     }
 
   }
 }
-
-
