@@ -38,7 +38,7 @@ export class PassengerService {
         password: hashedPassword
       });
     } catch(e) {
-      console.error(e);
+      throw new Error(e);
     }
   }
   

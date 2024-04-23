@@ -48,7 +48,7 @@ export class PositionService {
    * @param start The start position
    * @param end The destination position 
    */
-  public async move(vehicle: Vehicle, start: Position, end: Position): Promise<void> {
+  public async move(vehicle: Vehicle, email: string, start: Position, end: Position): Promise<void> {
     const currentPosition = start;
     const distance = this.calculateDistance(start, end);
 
@@ -62,6 +62,7 @@ export class PositionService {
       const intervalId = setInterval(() => {
         const distanceLeft = this.calculateDistance(currentPosition, end);
         console.table({
+          'Passenger': email,
           'Driver': `${vehicle.firstName} ${vehicle.lastName}`,
           'Brand': vehicle.brand,
           'Current latitude': currentPosition.latitude,
