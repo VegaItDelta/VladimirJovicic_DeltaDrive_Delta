@@ -4,7 +4,9 @@ import { Model } from 'mongoose';
 import { Vehicle } from './vehicle';
 import { CacheService } from '../../cache';
 import { Position, PositionService } from '../../services';
-import { VehicleOffer } from './vehicle-offer';
+import { VehicleOffer } from './dto/vehicle-offer';
+import { ReviewService } from '../review';
+import { VehicleReviewDto } from './dto';
 
 export interface DrivingPositionData {
   // The current location of the passenger
@@ -19,7 +21,8 @@ export class VehicleService {
   public constructor(
     @InjectModel(Vehicle.name) private vehicleModel: Model<Vehicle>,
     private readonly cacheService: CacheService,
-    private readonly positionService: PositionService
+    private readonly positionService: PositionService,
+    private readonly reviewService: ReviewService
   ) {}
 
   /**
@@ -56,12 +59,12 @@ export class VehicleService {
    * @param count How many vehicles should be returned
    * @returns Vehicles with the closest distances (count)
    */
-  public findClosestVehicles(
+  public async findClosestVehicles(
     userPosition: Position,
     vehicles: Vehicle[],
     count: number,
     distanceToDestination: number
-  ): VehicleOffer[] {
+  ): Promise<VehicleOffer[]> {
     const vehicleDistances = vehicles.map(vehicle => ({
       vehicle,
       distance: this.positionService.calculateDistance(userPosition, vehicle)
@@ -78,13 +81,29 @@ export class VehicleService {
         continue;
       }
 
+      const reviews: VehicleReviewDto[] = await this.reviewService.getVehicleReviews(vehicleDistance.vehicle.uuid);
+      
+      let score = 0;
+      for (let review of reviews) {
+        score += review.rate;
+      }
+
+      let averageRating = 0;
+      if (reviews.length > 0) {
+        // Prevend dividing by zero
+        averageRating = score / reviews.length;
+      }
+
       closestVehicles.push({
         // THe vehicle data
         vehicle: vehicleDistance.vehicle,
         // The calculated distance between the vehicle and the passenger
         distanceToDriver: vehicleDistance.distance,
         // The price for the whole ride
-        price: distanceToDestination * vehicleDistance.vehicle.pricePerKM + vehicleDistance.vehicle.startPrice
+        price: distanceToDestination * vehicleDistance.vehicle.pricePerKM + vehicleDistance.vehicle.startPrice,
+        // Reviews
+        reviews,
+        averageRating
       });    
       
       // If the array has the maximum length break to loop

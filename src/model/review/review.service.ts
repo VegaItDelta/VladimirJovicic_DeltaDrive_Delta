@@ -4,14 +4,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { GuidService } from '../../services';
 import { ReviewDto } from './dto';
-import { Vehicle } from '../vehicle';
+import { Vehicle, VehicleReviewDto } from '../vehicle';
 
 @Injectable()
 export class ReviewService {
     public constructor(
         @InjectModel(Review.name) private reviewModel: Model<Review>,
         private readonly guidService: GuidService
-    ) {}
+    ) { }
 
     /**
      * Fetches the review by the uuid
@@ -48,20 +48,11 @@ export class ReviewService {
      */
     public async getAllReviews(email: string): Promise<{ completed: ReviewDto[]; pending: ReviewDto[]; }> {
         // Fetch the reviews by joining with the vehicle by the id
-        const reviews: Review[] = await this.reviewModel.aggregate([
-            { $match: { email } }, // Match the review the email
-            {
-              $lookup: {
-                from: 'vehicles', // Name of the vehicles collection
-                localField: 'vehicleId', // Field in the review model
-                foreignField: 'uuid', // Field in the vehicles collection
-                as: 'vehicle' // Name of the field to store the matched vehicles
-              }
-            }
-          ]);
+        const query = { email };
+        const reviews = await this.fetchReviews(query);
 
-        const pending: ReviewDto[] = []
-        const completed: ReviewDto[] = []
+        const pending: ReviewDto[] = [];
+        const completed: ReviewDto[] = [];
         for (let review of reviews) {
             // The vehicle was queried by uuid so it should be only 1 vehicle returned
             const vehicleData: Vehicle = review.vehicle[0];
@@ -97,11 +88,67 @@ export class ReviewService {
         return { completed, pending }
     }
 
+    /**
+     * Leave a review for a vehicle.
+     * It completes a pending review.
+     * @param review The review the user has left
+     */
     public async leaveReview(review: Review): Promise<void> {
         await this.reviewModel.updateOne(
             { uuid: review.uuid },
             review
         );
     }
-   
+
+    /**
+     * Get all completed reviews for a vehicle
+     * @param vehicleId The id of the vehicle
+     * @returns The reviews for the vehicle
+     */
+    public async getVehicleReviews(vehicleId): Promise<VehicleReviewDto[]> {
+        const vehicleReviews: VehicleReviewDto[] = []
+
+        // Get the review by the vehicleId and the completed ones
+        const query = { vehicleId, completed: true };
+
+        // Fetch the reviews
+        const reviews = await this.fetchReviews(query);
+
+        for (let review of reviews) {
+            // Assign the rate
+            const vehicleReview: VehicleReviewDto = {
+                rate: review.rate
+            }
+
+            // Assign the comment if it is present
+            if (review.comment != null) {
+                vehicleReview.comment = review.comment;
+            }
+
+            // Push it to the returVal array
+            vehicleReviews.push(vehicleReview)
+        }
+
+        return vehicleReviews;
+    }
+
+    /**
+     * Fetch the reviews by joining it with the vehicle
+     * @param query The query to match
+     * @returns Reviews joined by the vehicle table
+     */
+    private async fetchReviews(query: any): Promise<Review[]> {
+        return await this.reviewModel.aggregate([
+            { $match: query }, // Get the review by query
+            {
+                $lookup: {
+                    from: 'vehicles', // Name of the vehicles collection
+                    localField: 'vehicleId', // Field in the review model
+                    foreignField: 'uuid', // Field in the vehicles collection
+                    as: 'vehicle' // Name of the field to store the matched vehicles
+                }
+            }
+        ]);
+    }
+
 }

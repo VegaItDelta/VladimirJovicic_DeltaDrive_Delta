@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Query, UseInterceptors, Res, Session, HttpException } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
 import { Position, PositionService } from '../../services';
-import { VehicleOffer } from './vehicle-offer';
+import { VehicleOffer } from './dto/vehicle-offer';
 import { HistoryService } from '../history/history.service';
 import { AuthentificationInterceptor } from '../../interceptor/authentification.interceptor';
 import { ReviewService } from '../review';

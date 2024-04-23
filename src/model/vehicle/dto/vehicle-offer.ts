@@ -1,4 +1,5 @@
-import { Vehicle } from './vehicle';
+import { VehicleReviewDto } from '.';
+import { Vehicle } from '../vehicle';
 
 /**
  * An interface that represents the offer from a driver
@@ -18,4 +19,14 @@ export interface VehicleOffer {
      * The price of the ride
      */
     price: number
+
+    /**
+     * Reviews of the vehicle
+     */
+    reviews: VehicleReviewDto[];
+
+    /**
+     * The average rating
+     */
+    averageRating: number;
 }

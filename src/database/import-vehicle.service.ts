@@ -52,12 +52,8 @@ export class ImportVehiclesService implements OnModuleInit {
           convertedVehicle.uuid = this.guidService.generateGuid();
         }
 
-        if (convertedVehicle.rating  == null) {
-          convertedVehicle.rating = 0.0;
-        }
-
         if (convertedVehicle.booked  == null) {
-          // For mocking already booked vehicles, generate a 20% chance of being already booked
+          // For mocking a more realistic scenario, generate a 20% chance of being already booked
           convertedVehicle.booked = Math.random() <= 0.2;
         }
         vehiclesToAdd.push(convertedVehicle);
