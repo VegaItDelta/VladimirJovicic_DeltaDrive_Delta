@@ -1,7 +1,7 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Observable, of } from 'rxjs';
-import { AuthentificationInterceptor } from './authentification.interceptor';
+import { AuthentificationInterceptor } from '../../../src/interceptor';
 
 describe('AuthentificationInterceptors', () => {
   let interceptor: AuthentificationInterceptor;

@@ -1,4 +1,4 @@
-import { HistoryModule } from "./history.module";
+import { HistoryModule } from '../../../src/model';
 
 describe('HistoryModule', () => {
 

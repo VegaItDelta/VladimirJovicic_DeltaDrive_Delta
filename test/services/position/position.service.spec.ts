@@ -1,5 +1,4 @@
-import { PositionService } from './position.service';
-import { Position } from './position';
+import { PositionService, Position } from '../../../src/services';
 
 describe('PositionService', () => {
   let positionService: PositionService;

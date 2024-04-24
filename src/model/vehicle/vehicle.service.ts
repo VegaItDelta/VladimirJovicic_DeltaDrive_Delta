@@ -40,7 +40,7 @@ export class VehicleService {
     if (this.cacheService.isEmpty()) {
       const vehicles: Vehicle[] = await this.vehicleModel.find();
       this.cacheService.addAll(vehicles);
-      return await this.vehicleModel.find();
+      return vehicles;
     } else {
       return this.cacheService.getAll();
     }

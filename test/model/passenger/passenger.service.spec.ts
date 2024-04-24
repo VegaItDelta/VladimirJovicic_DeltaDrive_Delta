@@ -1,9 +1,9 @@
 import { UnauthorizedException, BadRequestException } from '@nestjs/common';
-import { PassengerService } from './passenger.service';
-import { Passenger } from './passenger';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import * as validator from 'validator';
+import { Passenger } from '../../../src/model/passenger/passenger';
+import { PassengerService } from '../../../src/model/passenger/passenger.service';
 
 // Mock the Passenger model
 const mockPassengerModel = {

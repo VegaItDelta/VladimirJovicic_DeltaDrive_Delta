@@ -22,7 +22,7 @@ export class ReviewController {
               data: { completed: reviews.completed, pending: reviews.pending }
           });
         } catch (e) {
-          response.status(e.getStatus()).send({ message: e.message })
+          response.status(e).send({ message: e.message })
         }
       }
 

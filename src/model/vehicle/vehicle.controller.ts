@@ -104,7 +104,7 @@ export class VehicleController {
       }
 
       if (vehicle.booked) {
-        throw new HttpException('Vehicle already bookend.', HttpStatus.BAD_REQUEST);
+        throw new HttpException('This vehicle is already booked. Please choose another one.', HttpStatus.BAD_REQUEST);
       }
 
       // There is a chance of declining the ride

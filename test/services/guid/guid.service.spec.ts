@@ -1,5 +1,5 @@
-import { GuidService } from './guid.service';
 import { v4 as uuidv4 } from 'uuid';
+import { GuidService } from '../../../src/services';
 
 jest.mock('uuid');
 

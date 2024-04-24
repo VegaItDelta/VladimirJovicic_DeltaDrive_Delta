@@ -1,4 +1,4 @@
-import { VehicleHelperService } from './vehicle-helper.service';
+import { VehicleHelperService } from "../../../src/model";
 
 describe('VehicleHelperService', () => {
   const service = new VehicleHelperService();

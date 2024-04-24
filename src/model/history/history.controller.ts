@@ -18,8 +18,7 @@ export class HistoryController {
                 data: history
             });
         } catch(e) {
-            console.error(e);
-            response.status(e.getStatus()).send( {message: e.message} );
+            response.status(e.status).send( {message: e.message} );
         }
     }
 

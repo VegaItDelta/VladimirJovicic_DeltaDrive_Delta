@@ -1,7 +1,7 @@
 import { ExecutionContext, CallHandler } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { NonAuthentificatedInterceptor } from './non-authentificated.interceptor';
 import { Observable } from 'rxjs';
+import { NonAuthentificatedInterceptor } from '../../../src/interceptor';
 
 describe('NonAuthentificatedInterceptor', () => {
   let interceptor: NonAuthentificatedInterceptor;
