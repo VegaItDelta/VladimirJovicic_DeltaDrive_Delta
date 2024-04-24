@@ -128,8 +128,8 @@ export class VehicleController {
       };
 
       const vehiclePosition: Position = {
-        latitude: vehicle.latitude,
-        longitude: vehicle.longitude
+        latitude: +vehicle.latitude,
+        longitude: +vehicle.longitude
       }
 
       // Calculate the total price
