@@ -31,4 +31,4 @@ import { ReviewModule } from './model/review';
     GuidService
   ],
 })
-export class AppModule {}
+export class AppModule { }

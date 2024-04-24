@@ -9,7 +9,7 @@ import * as validator from 'validator';
 export class PassengerService {
   public constructor(
     @InjectModel(Passenger.name) private passengerModel: Model<Passenger>,
-  ) {}
+  ) { }
 
   /**
    * Registers a new passenger where the email must me unique
@@ -22,8 +22,8 @@ export class PassengerService {
     }
     try {
       // get the user with the mail
-      const existingPassenger  = await this.passengerModel.findOne({email});
-  
+      const existingPassenger = await this.passengerModel.findOne({ email });
+
       if (existingPassenger != null) {
         // If the passenger exists throw an error
         throw new ConflictException('Email already exists');
@@ -37,11 +37,11 @@ export class PassengerService {
         email,
         password: hashedPassword
       });
-    } catch(e) {
+    } catch (e) {
       throw new Error(e);
     }
   }
-  
+
   /**
    * Function for a user to login.
    * If a user is already logged in it won't re-login again

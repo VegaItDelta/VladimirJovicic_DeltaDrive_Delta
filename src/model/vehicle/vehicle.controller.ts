@@ -29,7 +29,7 @@ export class VehicleController {
     private readonly vehicleService: VehicleService,
     private readonly positionService: PositionService,
     private readonly workerService: WorkerService,
-  ) {}
+  ) { }
 
   @Get('/getAll')
   public async getAllVehicles(@Res() response): Promise<void> {
@@ -54,9 +54,9 @@ export class VehicleController {
         destinationLatitude == null ||
         destinationLongitude == null
       ) {
-          throw new HttpException('Wrong location data', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Wrong location data', HttpStatus.BAD_REQUEST);
       }
-   
+
       // The currenct location of the passenger
       const passengerPosition: Position = {
         latitude: +passengerLatitude,
@@ -74,7 +74,7 @@ export class VehicleController {
 
       const vehicleOffers: VehicleOffer[] = await this.vehicleService.findClosestVehicles(passengerPosition, vehicles, CLOSEST_VEHICLES_COUNT, distanceToDestination);
       response.status(HttpStatus.OK).send({ message: `${vehicleOffers.length} offers found!`, vehicleDistances: vehicleOffers });
-    } catch(e) {
+    } catch (e) {
       response.status(e.getStatus()).send({ message: e.message });
     }
   }
@@ -89,14 +89,14 @@ export class VehicleController {
 
     try {
       if (
-      passengerLatitude == null ||
-      passengerLongitude == null ||
-      destinationLatitude == null ||
-      destinationLongitude == null
+        passengerLatitude == null ||
+        passengerLongitude == null ||
+        destinationLatitude == null ||
+        destinationLongitude == null
       ) {
         throw new HttpException('Wrong location data', HttpStatus.BAD_REQUEST);
-      } 
-    
+      }
+
       const vehicle = await this.vehicleService.getVehicle(uuid);
 
       if (vehicle == null) {
@@ -116,7 +116,7 @@ export class VehicleController {
         response.status(HttpStatus.OK).send({ message: `The driver have declined the ride. Reason: ${reason}` });
         return;
       }
-      
+
       const passengerPosition: Position = {
         latitude: +passengerLatitude,
         longitude: +passengerLongitude

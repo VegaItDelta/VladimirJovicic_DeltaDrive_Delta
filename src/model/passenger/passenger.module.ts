@@ -11,11 +11,11 @@ import { CONSTRUCTOR_PREFIX } from '../../constants';
   controllers: [PassengersController],
   providers: [PassengerService],
   imports: [
-    RouterModule.register([ { path: CONSTRUCTOR_PREFIX, module: PassengersModule } ]),
+    RouterModule.register([{ path: CONSTRUCTOR_PREFIX, module: PassengersModule }]),
     DatabaseModule,
     MongooseModule.forFeature([
       { name: Passenger.name, schema: PassengerSchema },
     ]),
   ],
 })
-export class PassengersModule {}
+export class PassengersModule { }

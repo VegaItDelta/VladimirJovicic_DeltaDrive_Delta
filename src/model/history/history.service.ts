@@ -11,12 +11,12 @@ export class HistoryService {
     public constructor(
         @InjectModel(History.name) private historyModel: Model<History>,
         private readonly cacheService: CacheService
-      ) { }
+    ) { }
 
     public async insert(data: History): Promise<void> {
         try {
             await this.historyModel.create(data);
-        } catch(e) {
+        } catch (e) {
             throw new Error(e);
         }
     }
@@ -29,8 +29,8 @@ export class HistoryService {
     public async getUserHistory(email: string): Promise<HistoryDto[]> {
         try {
             const userHistory: HistoryDto[] = [];
-            const history: History[] = await this.historyModel.find({email});
-    
+            const history: History[] = await this.historyModel.find({ email });
+
             for (let historyData of history) {
                 const vehicle = this.cacheService.get(historyData.vehicleId);
                 historyData.vehicle = vehicle;
@@ -38,7 +38,7 @@ export class HistoryService {
                 userHistory.push(historyDataDto);
             }
             return userHistory;
-        } catch(e) {
+        } catch (e) {
             throw new Error(e);
         }
     }

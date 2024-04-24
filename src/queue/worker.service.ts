@@ -59,11 +59,11 @@ export class WorkerService {
     // Get the data from the queue
     const { destinationPosition, passengerPosition, vehiclePosition, email, totalPrice, vehicle } = data;
 
-    console.log(`Driver ${vehicle.firstName} ${vehicle.lastName} is comming to your destination! ${ email }`);
+    console.log(`Driver ${vehicle.firstName} ${vehicle.lastName} is comming to your destination! ${email}`);
     // Comming to pick up the passnger
     await this.positionService.move(vehicle, email, vehiclePosition, passengerPosition);
 
-    console.log(`Taking ${ email } to destination...`);
+    console.log(`Taking ${email} to destination...`);
     // Bringing the passenger to the destination
     await this.positionService.move(vehicle, email, passengerPosition, destinationPosition);
 
@@ -85,6 +85,6 @@ export class WorkerService {
     // Wrap up the ride by making the driver avaiblable again and changing his position
     await this.vehicleService.finishRide(vehicle, destinationPosition);
 
-    console.log(`Vehicle ${ vehicle.brand } - ${ vehicle.firstName } ${ vehicle.lastName } reached the desination. Thank you ${email} for using Drive Delta!`);
+    console.log(`Vehicle ${vehicle.brand} - ${vehicle.firstName} ${vehicle.lastName} reached the desination. Thank you ${email} for using Drive Delta!`);
   }
 }

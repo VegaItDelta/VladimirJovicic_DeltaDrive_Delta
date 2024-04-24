@@ -6,29 +6,29 @@ const VEHICLE_SPEED = 20000; // km/h
 const UPDATE_POSITION_INTERVAL = 5000; // update the current position each n miliseconds
 @Injectable()
 export class PositionService {
-     /**
-   * Calculate distance between two points.
-   * Using the Haversine formula.
-   * https://en.wikipedia.org/wiki/Haversine_formula
-   * @param point1 The first position
-   * @param point2 The first position
-   * @returns The distance between two points
-   */
+  /**
+* Calculate distance between two points.
+* Using the Haversine formula.
+* https://en.wikipedia.org/wiki/Haversine_formula
+* @param point1 The first position
+* @param point2 The first position
+* @returns The distance between two points
+*/
   public calculateDistance(point1: Position, point2: Position): number {
     const R = 6371; // Radius of the Earth in kilometers
     const latitude1 = point1.latitude;
     const longitude1 = point1.longitude;
     const latitude2 = point2.latitude;
     const longitude2 = point2.longitude;
-  
+
     const latitudeDistance = this.toRadians(latitude2 - latitude1);
     const longitudeDistance = this.toRadians(longitude2 - longitude1);
-  
+
     const a =
       Math.sin(latitudeDistance / 2) * Math.sin(latitudeDistance / 2) +
       Math.cos(this.toRadians(latitude1)) * Math.cos(this.toRadians(latitude2)) * Math.sin(longitudeDistance / 2) * Math.sin(longitudeDistance / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  
+
     const distance = R * c;
     return distance;
   }
@@ -52,7 +52,7 @@ export class PositionService {
     const currentPosition = start;
     const distance = this.calculateDistance(start, end);
 
-    const timeToReachTarget = (distance / VEHICLE_SPEED) * 3600 * 1000; 
+    const timeToReachTarget = (distance / VEHICLE_SPEED) * 3600 * 1000;
     let steps = Math.ceil(timeToReachTarget / UPDATE_POSITION_INTERVAL);
 
     const stepLat = (end.latitude - currentPosition.latitude) / steps;
@@ -80,9 +80,9 @@ export class PositionService {
         currentPosition.latitude += stepLat;
         currentPosition.longitude += stepLng;
         steps--;
-  
-        }, UPDATE_POSITION_INTERVAL);
+
+      }, UPDATE_POSITION_INTERVAL);
     });
- }
+  }
 
 } 

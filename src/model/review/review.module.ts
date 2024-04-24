@@ -13,10 +13,10 @@ import { CONSTRUCTOR_PREFIX } from '../../constants';
   controllers: [ReviewController],
   providers: [ReviewService, GuidService],
   imports: [
-    RouterModule.register([ { path: CONSTRUCTOR_PREFIX, module: ReviewModule } ]),
+    RouterModule.register([{ path: CONSTRUCTOR_PREFIX, module: ReviewModule }]),
     DatabaseModule,
     MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
     CacheModule,
   ],
 })
-export class ReviewModule {}
+export class ReviewModule { }

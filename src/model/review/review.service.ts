@@ -54,7 +54,7 @@ export class ReviewService {
      */
     public async getAllReviews(email: string): Promise<{ completed: ReviewDto[]; pending: ReviewDto[]; }> {
         // Fetch the reviews by joining with the vehicle by the id
-        const reviewsFromDb: Review[] = await this.reviewModel.find({email});
+        const reviewsFromDb: Review[] = await this.reviewModel.find({ email });
 
         const pending: ReviewDto[] = [];
         const completed: ReviewDto[] = [];

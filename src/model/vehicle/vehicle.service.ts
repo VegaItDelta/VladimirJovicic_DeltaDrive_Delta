@@ -29,7 +29,7 @@ export class VehicleService {
     private readonly cacheService: CacheService,
     private readonly positionService: PositionService,
     private readonly reviewService: ReviewService
-  ) {}
+  ) { }
 
   /**
    * Get all the vehicles and insert it to the chache.
@@ -53,7 +53,7 @@ export class VehicleService {
    */
   public async getVehicle(uuid: string): Promise<Vehicle | null> {
     if (this.cacheService.isEmpty()) {
-      return await this.vehicleModel.findOne({uuid});
+      return await this.vehicleModel.findOne({ uuid });
     }
     return this.cacheService.get(uuid)
   }
@@ -75,11 +75,11 @@ export class VehicleService {
       vehicle,
       distance: this.positionService.calculateDistance(userPosition, vehicle)
     }));
-  
+
     // Sort the distances
     vehicleDistances.sort((a, b) => a.distance - b.distance);
 
-  const closestVehicles: VehicleOffer[] = [];
+    const closestVehicles: VehicleOffer[] = [];
     for (let vehicleDistance of vehicleDistances) {
 
       // If the vehicle is alreay booked move to the next one
@@ -88,7 +88,7 @@ export class VehicleService {
       }
 
       const reviews: VehicleReviewDto[] = await this.reviewService.getVehicleReviews(vehicleDistance.vehicle.uuid);
-      
+
       let score = 0;
       for (let review of reviews) {
         score += review.rate;
@@ -110,8 +110,8 @@ export class VehicleService {
         // Reviews
         reviews,
         averageRating
-      });    
-      
+      });
+
       // If the array has the maximum length break to loop
       if (closestVehicles.length === count) {
         break;
@@ -127,7 +127,7 @@ export class VehicleService {
   public async book(vehicle: Vehicle): Promise<void> {
     vehicle.booked = true;
     this.cacheService.set(vehicle);
-    await this.vehicleModel.updateOne({uuid: vehicle.uuid}, vehicle).exec();
+    await this.vehicleModel.updateOne({ uuid: vehicle.uuid }, vehicle).exec();
   }
 
 
@@ -141,6 +141,6 @@ export class VehicleService {
     vehicle.latitude = newLocation.latitude;
     vehicle.booked = false;
     this.cacheService.set(vehicle);
-    await this.vehicleModel.updateOne({uuid: vehicle.uuid}, vehicle).exec();
+    await this.vehicleModel.updateOne({ uuid: vehicle.uuid }, vehicle).exec();
   }
 }

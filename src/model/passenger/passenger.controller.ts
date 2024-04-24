@@ -5,7 +5,7 @@ import { AuthentificationInterceptor, NonAuthentificatedInterceptor } from '../.
 
 @Controller('passenger')
 export class PassengersController {
-  constructor(private readonly passengersService: PassengerService) {}
+  constructor(private readonly passengersService: PassengerService) { }
 
   @UseInterceptors(NonAuthentificatedInterceptor)
   @Post('register')
@@ -16,7 +16,7 @@ export class PassengersController {
     try {
       await this.passengersService.register(passengerData);
       response.status(HttpStatus.OK).send({ message: 'Registration successful', passengerData });
-    } catch(e) {
+    } catch (e) {
       response.status(HttpStatus.BAD_REQUEST).send({ message: e.message || 'Registration failed' });
     }
   }
@@ -35,7 +35,7 @@ export class PassengersController {
         email: passenger.email
       };
       response.status(HttpStatus.OK).send({ message: `Login successful ${passenger.email}` });
-    } catch(e) {
+    } catch (e) {
       response.status(e.status).send({ message: e.message });
     }
   }
@@ -52,10 +52,10 @@ export class PassengersController {
           console.error('Error destroying session:', err);
           response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: 'Failed to logout' });
         } else {
-          response.status(HttpStatus.OK).send({message: 'Logged out successfully'});
+          response.status(HttpStatus.OK).send({ message: 'Logged out successfully' });
         }
       });
-    } catch(e) {
+    } catch (e) {
       response.status(e.getStatus()).send({ message: e.message });
     }
   }

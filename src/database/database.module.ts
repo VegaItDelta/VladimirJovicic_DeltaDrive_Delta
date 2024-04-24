@@ -9,4 +9,4 @@ import { DATABASE_URL } from '../constants';
     CacheModule,
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule { }

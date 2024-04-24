@@ -7,7 +7,7 @@ import { HistoryDto } from './dto';
 @Controller('history')
 export class HistoryController {
 
-    public constructor(private readonly historyService: HistoryService) {}
+    public constructor(private readonly historyService: HistoryService) { }
 
     @Get()
     public async get(@Session() session: Record<string, any>, @Res() response): Promise<void> {
@@ -17,8 +17,8 @@ export class HistoryController {
                 message: `History for the user: ${session.passenger.email}`,
                 data: history
             });
-        } catch(e) {
-            response.status(e.status).send( {message: e.message} );
+        } catch (e) {
+            response.status(e.status).send({ message: e.message });
         }
     }
 

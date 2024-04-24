@@ -16,7 +16,7 @@ import { CONSTRUCTOR_PREFIX } from '../../constants';
   controllers: [VehicleController],
   providers: [VehicleService, PositionService, GuidService, ReviewService, WorkerService, QueueService, HistoryService],
   imports: [
-    RouterModule.register([ { path: CONSTRUCTOR_PREFIX, module: VehicleModule } ]),
+    RouterModule.register([{ path: CONSTRUCTOR_PREFIX, module: VehicleModule }]),
     DatabaseModule,
     MongooseModule.forFeature([{ name: Vehicle.name, schema: VehicleSchema }]),
     CacheModule,
@@ -25,4 +25,4 @@ import { CONSTRUCTOR_PREFIX } from '../../constants';
 
   ],
 })
-export class VehicleModule {}
+export class VehicleModule { }

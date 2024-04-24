@@ -18,7 +18,7 @@ export class ImportVehiclesService implements OnModuleInit {
     @InjectModel(Vehicle.name) private readonly vehicleModel: Model<Vehicle>,
     private readonly cacheService: CacheService,
     private readonly guidService: GuidService
-  ) {}
+  ) { }
 
   public async onModuleInit() {
     // Count the documents and only if they are empty, execute it
@@ -48,11 +48,11 @@ export class ImportVehiclesService implements OnModuleInit {
           'pricePerKM',
         );
 
-        if (convertedVehicle.uuid  == null) {
+        if (convertedVehicle.uuid == null) {
           convertedVehicle.uuid = this.guidService.generateGuid();
         }
 
-        if (convertedVehicle.booked  == null) {
+        if (convertedVehicle.booked == null) {
           // For mocking a more realistic scenario, generate a 20% chance of being already booked
           convertedVehicle.booked = Math.random() <= 0.2;
         }

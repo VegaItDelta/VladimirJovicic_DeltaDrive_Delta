@@ -12,10 +12,10 @@ import { CONSTRUCTOR_PREFIX } from '../../constants';
   controllers: [HistoryController],
   providers: [HistoryService],
   imports: [
-    RouterModule.register([ { path: CONSTRUCTOR_PREFIX, module: HistoryModule } ]),
+    RouterModule.register([{ path: CONSTRUCTOR_PREFIX, module: HistoryModule }]),
     DatabaseModule,
     MongooseModule.forFeature([{ name: History.name, schema: HistorySchema }]),
     CacheModule,
   ],
 })
-export class HistoryModule {}
+export class HistoryModule { }

@@ -24,13 +24,13 @@ export class CacheService {
     this.cache.set(data.uuid, data);
   }
 
-    /**
-   * Gets an individual vehicle
-   * @param uuid The uuid of the vehicle
-   */
-    public get(uuid: string): Vehicle | null {
-      return this.cache.get(uuid) || null;
-    }
+  /**
+ * Gets an individual vehicle
+ * @param uuid The uuid of the vehicle
+ */
+  public get(uuid: string): Vehicle | null {
+    return this.cache.get(uuid) || null;
+  }
 
   /**
    * Checks if the cache data is empty
