@@ -20,7 +20,7 @@ describe('HistoryDto', () => {
     const brandMock = 'brandMock';
     const firstNameMock = 'firstNameMock';
     const lastNameMock = 'lastNameMock';
-    
+
     const vehicle = {} as any;
     vehicle.brand = brandMock;
     vehicle.firstName = firstNameMock;

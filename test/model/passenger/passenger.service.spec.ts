@@ -38,7 +38,7 @@ describe('PassengerService', () => {
       const passengerData = {
         email: 'test@example.com',
         password: 'password',
-        exec: () => {}
+        exec: () => { }
       };
 
       (validator.isEmail as jest.Mock).mockReturnValue(true);
@@ -102,7 +102,7 @@ describe('PassengerService', () => {
       const passenger = {
         email: 'test@example.com',
         password: 'hashedPassword',
-        exec: () => {}
+        exec: () => { }
       };
 
       mockPassengerModel.findOne.mockReturnValue(passenger);

@@ -15,7 +15,7 @@ describe('QueueService', () => {
   it('should add data to the queue', () => {
     const data: QueueData = {
       taskId: 'task1',
-      data: { },
+      data: {},
       processing: false,
     } as any;
 
@@ -65,7 +65,7 @@ describe('QueueService', () => {
   it('should not remove data from the queue if taskId does not exist', () => {
     const data1: QueueData = {
       taskId: 'task1',
-      data: { },
+      data: {},
       processing: false,
     } as any;
     const data2: QueueData = {

@@ -16,7 +16,7 @@ describe('ReviewDto', () => {
     const brandMock = 'brandMock';
     const firstNameMock = 'firstNameMock';
     const lastNameMock = 'lastNameMock';
-    
+
     const vehicle = {} as any;
     vehicle.uuid = vehicleUuidMock;
     vehicle.brand = brandMock;
@@ -36,9 +36,9 @@ describe('ReviewDto', () => {
             vehicle: {
                 brand: brandMock,
                 firstName: firstNameMock,
-                lastName: lastNameMock, 
+                lastName: lastNameMock,
                 vehicleId: vehicleUuidMock
-            }   
+            }
         };
 
         expect(reviewDto).toEqual(expetedReviewDto);
@@ -57,9 +57,9 @@ describe('ReviewDto', () => {
             vehicle: {
                 brand: brandMock,
                 firstName: firstNameMock,
-                lastName: lastNameMock, 
+                lastName: lastNameMock,
                 vehicleId: vehicleUuidMock
-            }   
+            }
         };
 
         expect(reviewDto).toEqual(expetedReviewDto);

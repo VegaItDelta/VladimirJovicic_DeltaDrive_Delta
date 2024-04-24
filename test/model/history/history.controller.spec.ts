@@ -37,7 +37,7 @@ describe('HistoryController', () => {
       const mockResonse = {
         message: 'History for the user: jon@doe.com',
         data: mockHistory
-    }
+      }
       mockHistoryService.getUserHistory.mockReturnValueOnce(mockHistory);
       await controller.get(sessionMock, responseMock);
       expect(responseMock.status().send).toHaveBeenCalledWith(mockResonse);
@@ -48,7 +48,7 @@ describe('HistoryController', () => {
       mockHistoryService.getUserHistory.mockRejectedValue(mockError);
       try {
         await controller.get(sessionMock, responseMock);
-      } catch(e) {
+      } catch (e) {
         expect(mockError).toBe(e);
       }
 

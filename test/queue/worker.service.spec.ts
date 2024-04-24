@@ -15,7 +15,7 @@ describe('WorkerService', () => {
     queueService = new QueueService();
     positionService = new PositionService();
     historyService = new HistoryService('' as any, '' as any);
-    reviewService = new ReviewService('' as any , '' as any , '' as any);
+    reviewService = new ReviewService('' as any, '' as any, '' as any);
     vehicleService = new VehicleService('' as any, '' as any, '' as any, '' as any);
     guidService = new GuidService();
     workerService = new WorkerService(queueService, positionService, historyService, reviewService, vehicleService, guidService);
@@ -27,7 +27,7 @@ describe('WorkerService', () => {
 
   describe('addToQueue', () => {
     it('should add ride data to the queue with processing status false', () => {
-      const data: DrivingPositionData = { } as any;
+      const data: DrivingPositionData = {} as any;
       const addToQueueSpy = jest.spyOn(queueService, 'addToQueue');
 
       workerService.addToQueue(data);

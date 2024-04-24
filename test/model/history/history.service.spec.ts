@@ -18,5 +18,5 @@ describe('HistoryService', () => {
       expect(historyModelMock.create).toHaveBeenCalledWith(mockData);
     });
   })
-  
+
 });
