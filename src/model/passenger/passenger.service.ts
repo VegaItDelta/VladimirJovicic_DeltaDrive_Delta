@@ -53,7 +53,7 @@ export class PassengerService {
     // It's bad practice to say only "Wrong username" or "Wrong password"
     // If a hack happens, the hacker won't know if the guessed anything right
     const errorMessage = 'Wrong email or password';
-    const passenger = await this.passengerModel.findOne({ email });
+    const passenger = await this.passengerModel.findOne({ email: email.trim().toLowerCase() });
     if (passenger == null) {
       throw new UnauthorizedException(errorMessage);
     }
